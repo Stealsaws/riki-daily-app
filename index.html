@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RIKI Daily Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0A1628;--card:#111E33;--card2:#18293E;--border:#1E3250;
+  --accent:#F59E0B;--a2:#D97706;--green:#10B981;--g2:#059669;
+  --red:#EF4444;--blue:#3B82F6;--text:#F1F5F9;--muted:#64748B;
+}
+body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;min-height:100vh}
+.scr{display:none;min-height:100vh;padding:20px 16px;flex-direction:column}
+.scr.act{display:flex}
+/* CENTER screens */
+#s-config,#s-login,#s-done{align-items:center;justify-content:center;gap:14px}
+.logo-ring{width:70px;height:70px;border-radius:20px;background:linear-gradient(135deg,#F59E0B,#EF4444);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 10px;box-shadow:0 8px 24px rgba(245,158,11,.35)}
+h1{font-size:22px;font-weight:800;text-align:center}
+.sub{color:var(--muted);font-size:13px;text-align:center;margin-top:3px}
+.card{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:20px;width:100%;max-width:420px}
+label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin:12px 0 5px;letter-spacing:.5px;text-transform:uppercase}
+input,select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.15s}
+input:focus,select:focus{border-color:var(--accent)}
+.btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s;text-align:center}
+.btn:active{transform:scale(.97)}
+.btn-a{background:var(--accent);color:#fff}.btn-a:active{background:var(--a2)}
+.btn-g{background:var(--green);color:#fff}.btn-g:active{background:var(--g2)}
+.btn-s{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-r{background:var(--red);color:#fff}
+.btn-sm{width:auto;padding:6px 12px;font-size:12px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-weight:600}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.row-sb{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:8px}
+.err{color:var(--red);font-size:13px;margin-top:6px;display:none;padding:8px 12px;background:rgba(239,68,68,.1);border-radius:8px}
+.info-box{max-width:420px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:12px;color:var(--muted);line-height:1.9}
+/* ADMIN */
+#s-admin{padding:0}
+.sticky-top{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--border)}
+.adm-hdr{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.tab-bar{display:flex;padding:0 16px}
+.tab{flex:1;padding:11px;text-align:center;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.15s}
+.tab.act{color:var(--accent);border-bottom-color:var(--accent)}
+.adm-body{padding:14px 16px 80px;max-width:480px;width:100%;margin:0 auto}
+.li{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px}
+.li-title{font-size:14px;font-weight:700}
+.li-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.tag{display:inline-block;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;background:rgba(245,158,11,.15);color:var(--accent)}
+.item-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;margin:3px}
+/* WORK */
+#s-work{padding:0}
+.work-hdr{background:var(--bg);border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:50}
+.pbar-wrap{background:var(--border);border-radius:99px;height:6px;overflow:hidden;margin-top:8px}
+.pbar{height:100%;background:var(--green);border-radius:99px;transition:.4s}
+.pbar-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.chips{display:flex;gap:8px;margin-top:8px}
+.chip{flex:1;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:9px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;transition:.15s}
+.chip.act{border-color:var(--accent);background:rgba(245,158,11,.1);color:var(--accent)}
+.work-body{padding:12px 14px 100px}
+.tlbl{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.8px;text-transform:uppercase;margin:18px 0 8px 2px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.tc.done{border-color:var(--green);background:rgba(16,185,129,.05)}
+.tc-hdr{display:flex;align-items:center;padding:13px 14px;gap:11px;cursor:pointer;user-select:none}
+.t-ico{width:38px;height:38px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tc.done .t-ico{display:none}
+.t-done{display:none;font-size:22px;flex-shrink:0}
+.tc.done .t-done{display:block}
+.t-info{flex:1;min-width:0}
+.t-title{font-size:14px;font-weight:700;line-height:1.3}
+.t-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.t-arr{color:var(--muted);transition:.2s}
+.tc.open .t-arr{transform:rotate(180deg)}
+.tc-body{display:none;padding:0 12px 12px}
+.tc.open .tc-body{display:block}
+.pi{display:flex;align-items:center;gap:9px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;transition:.2s}
+.pi.ok{border-color:var(--green)}
+.pi-lbl{flex:1;font-size:13px;line-height:1.3}
+.pi-thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;display:none;flex-shrink:0;background:var(--border)}
+.pi.ok .pi-thumb{display:block}
+.pi-btn{background:var(--accent);border:none;border-radius:8px;padding:8px 12px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap;min-width:64px;text-align:center}
+.pi.ok .pi-btn{background:var(--green)}
+.pi-status{font-size:10px;color:var(--muted);margin-top:3px;display:none}
+input[type=file]{display:none}
+/* FAB */
+#fab{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;border:none;border-radius:28px;padding:15px 36px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 28px rgba(16,185,129,.45);display:none;z-index:200;animation:fabpop .3s ease}
+@keyframes fabpop{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+/* DONE */
+.done-ring{width:80px;height:80px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;animation:pop .4s ease;box-shadow:0 8px 28px rgba(16,185,129,.4)}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.stat-row:last-child{border:none}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.overlay.act{display:flex}
+.modal{background:var(--card);border-radius:20px 20px 0 0;padding:22px 20px 36px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+.modal h2{font-size:16px;font-weight:800;margin-bottom:16px}
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1E3250;border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;z-index:999;opacity:0;transition:.25s;white-space:nowrap;pointer-events:none;text-align:center}
+#toast.on{opacity:1}
+/* LOADING OVERLAY */
+#loading{position:fixed;inset:0;background:rgba(10,22,40,.85);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#loading.on{display:flex}
+.spin{display:inline-block;animation:sp 1s linear infinite;font-size:32px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- LOADING -->
+<div id="loading"><div class="spin">⚙️</div><div style="font-size:14px;color:var(--muted)" id="load-txt">กำลังโหลด...</div></div>
+
+<!-- ═══ CONFIG ═══ -->
+<div id="s-config" class="scr act">
+  <div><div class="logo-ring">☁️</div><h1>RIKI Daily Check</h1><p class="sub">เชื่อมต่อ Google Apps Script</p></div>
+  <div class="card">
+    <label>Apps Script Web App URL</label>
+    <input id="cfg-url" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+    <div id="cfg-err" class="err">❌ เชื่อมต่อไม่ได้ — ตรวจสอบ URL และการ Deploy</div>
+    <button class="btn btn-a mt16" onclick="saveConfig()">🔗 เชื่อมต่อ</button>
+  </div>
+  <div class="info-box">
+    <strong style="color:var(--accent)">วิธีรับ URL (ทำครั้งเดียว):</strong><br>
+    1. เปิด <b>script.google.com</b> → New Project<br>
+    2. วางโค้ดจากไฟล์ <b>riki_apps_script.js</b><br>
+    3. แก้ <b>SHEET_ID</b> และ <b>FOLDER_ID</b><br>
+    4. Run → <b>initializeSheets</b> (ครั้งแรก)<br>
+    5. Deploy → New Deployment → Web App<br>
+       &nbsp;&nbsp;• Execute as: <b>Me</b><br>
+       &nbsp;&nbsp;• Who has access: <b>Anyone</b><br>
+    6. คัดลอก URL มาวางด้านบน
+  </div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="s-login" class="scr">
+  <div><div class="logo-ring">🔑</div><h1>เข้าสู่ระบบ</h1><p class="sub">RIKI Daily Check</p></div>
+  <div class="card">
+    <label>รหัสสาขา</label>
+    <input id="l-code" type="text" placeholder="เช่น RIKI01" style="text-transform:uppercase" autocomplete="username">
+    <label>รหัสผ่าน</label>
+    <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <div id="l-err" class="err">❌ รหัสสาขาหรือรหัสผ่านไม่ถูกต้อง</div>
+    <button class="btn btn-a mt16" onclick="doLogin()">🚀 เข้าสู่ระบบ</button>
+    <button class="btn btn-s mt8" style="font-size:13px" onclick="show('s-config')">⚙️ เปลี่ยน Apps Script URL</button>
+  </div>
+</div>
+
+<!-- ═══ ADMIN ═══ -->
+<div id="s-admin" class="scr">
+  <div class="sticky-top">
+    <div class="adm-hdr"><span style="font-weight:800">⚙️ ผู้ดูแลระบบ</span><button class="btn-sm btn-s" onclick="doLogout()">ออกจากระบบ</button></div>
+    <div class="tab-bar">
+      <div class="tab act" onclick="adminTab('branches',this)">🏪 สาขา</div>
+      <div class="tab" onclick="adminTab('tasks',this)">📋 งาน</div>
+    </div>
+  </div>
+  <div class="adm-body">
+    <!-- TAB: BRANCHES -->
+    <div id="tab-branches">
+      <button class="btn btn-a mt8" onclick="openModal('m-branch')">+ เพิ่มสาขาใหม่</button>
+      <div id="branch-list" class="mt12"></div>
+    </div>
+    <!-- TAB: TASKS -->
+    <div id="tab-tasks" style="display:none">
+      <label>เลือกสาขา</label>
+      <select id="task-branch-sel" onchange="loadTasksAdmin()"></select>
+      <div class="chips mt8">
+        <div class="chip act" onclick="setAS('morning',this)">☀️ กะเช้า</div>
+        <div class="chip" onclick="setAS('afternoon',this)">🌙 กะบ่าย</div>
+      </div>
+      <button class="btn btn-a mt12" onclick="openModal('m-task')">+ เพิ่มหัวข้องาน</button>
+      <div id="task-admin-list" class="mt8"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ WORK ═══ -->
+<div id="s-work" class="scr">
+  <div class="work-hdr">
+    <div class="row-sb">
+      <span style="font-size:15px;font-weight:800" id="w-name">สาขา</span>
+      <button class="btn-sm btn-s" onclick="doLogout()">ออก</button>
+    </div>
+    <div class="chips mt8">
+      <div class="chip act" id="cm" onclick="switchShift('morning')">☀️ กะเช้า</div>
+      <div class="chip" id="ca" onclick="switchShift('afternoon')">🌙 กะบ่าย</div>
+    </div>
+    <div class="pbar-wrap"><div class="pbar" id="pbar" style="width:0%"></div></div>
+    <div class="pbar-row"><span id="p-lbl">0 / 0</span><span id="p-pct">0%</span></div>
+  </div>
+  <div class="work-body" id="work-body"></div>
+  <button id="fab" onclick="goToDone()">✅ ส่งรายงานวันนี้!</button>
+</div>
+
+<!-- ═══ DONE ═══ -->
+<div id="s-done" class="scr">
+  <div class="done-ring">✅</div>
+  <h1 style="text-align:center">รายงานครบแล้ว!</h1>
+  <p class="sub" id="done-sub" style="font-size:14px"></p>
+  <div class="card" id="done-stats"></div>
+  <div id="line-res" style="max-width:420px;width:100%;display:none;border-radius:12px;padding:12px 14px;font-size:13px;text-align:center;border:1px solid var(--green);background:rgba(16,185,129,.1);color:var(--green)"></div>
+  <div style="max-width:420px;width:100%;display:flex;flex-direction:column;gap:8px">
+    <button class="btn btn-g" id="line-btn" onclick="sendLine()">📱 ส่งแจ้งเตือน LINE</button>
+    <button class="btn btn-s" onclick="copyLineMsg()">📋 คัดลอกข้อความ</button>
+    <button class="btn btn-s" onclick="show('s-work')">⬅️ กลับรายงาน</button>
+    <button class="btn btn-s" onclick="doLogout()">🔄 ออกจากระบบ</button>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<div id="m-branch" class="overlay" onclick="oClose(event,'m-branch')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>🏪 เพิ่ม/แก้ไขสาขา</h2>
+    <input type="hidden" id="mb-id">
+    <label>ชื่อสาขา</label><input id="mb-name" placeholder="เช่น RIKI สาขา 2">
+    <label>รหัสสาขา (ใช้ Login)</label><input id="mb-code" placeholder="เช่น RIKI02" style="text-transform:uppercase">
+    <label>รหัสผ่าน <span style="color:var(--muted)">(เว้นว่างถ้าไม่เปลี่ยน)</span></label><input id="mb-pass" type="password" placeholder="ตั้งรหัสผ่านใหม่">
+    <label>LINE Channel Access Token <span style="color:var(--muted)">(ไม่บังคับ)</span></label><input id="mb-line" placeholder="Channel access token (long-lived)">
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.6">📌 รับได้จาก LINE Developers Console → Messaging API → Channel access token<br>⚠️ ข้อความจะถูกส่งแบบ Broadcast ไปหาทุกคนที่เพิ่มเพื่อน LINE OA นี้</div>
+    <div id="mb-err" class="err"></div>
+    <button class="btn btn-a mt12" onclick="saveBranch()">💾 บันทึก</button>
+    <button class="btn btn-s mt8" onclick="closeModal('m-branch')">ยกเลิก</button>
+  </div>
+</div>
+
+<div id="m-task" class="overlay" onclick="oClose(event,'m-task')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>📋 เพิ่มหัวข้องาน</h2>
+    <label>เวลา</label><input id="mt-time" placeholder="เช่น 07:30">
+    <label>ชื่องาน</label><input id="mt-title" placeholder="เช่น เปิดประตูร้าน">
+    <label>ไอคอน Emoji</label><input id="mt-icon" placeholder="🏪" maxlength="4">
+    <div id="mt-err" class="err"></div>
+    <button class="btn btn-a mt12" onclick="saveTask()">💾 บันทึก</button>
+    <button class="btn btn-s mt8" onclick="closeModal('m-task')">ยกเลิก</button>
+  </div>
+</div>
+
+<div id="m-item" class="overlay" onclick="oClose(event,'m-item')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>📸 เพิ่มรายการถ่ายรูป</h2>
+    <input type="hidden" id="mi-tid">
+    <label>ชื่อรายการ</label><input id="mi-lbl" placeholder="เช่น ถ่ายรูปหน้าร้าน">
+    <div id="mi-err" class="err"></div>
+    <button class="btn btn-a mt12" onclick="saveItem()">💾 บันทึก</button>
+    <button class="btn btn-s mt8" onclick="closeModal('m-item')">ยกเลิก</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════
+// STATE
+// ════════════════════════════
+let cfg={}, user=null, shift='morning', photos={}, allTasks=[], adminShift='morning';
+
+// ════════════════════════════
+// INIT
+// ════════════════════════════
+window.onload = () => {
+  cfg = JSON.parse(localStorage.getItem('riki_gdrive_cfg')||'{}');
+  cfg = {url:"https://script.google.com/macros/s/AKfycby8FVakygh2JqAgfQN4zK4HyApZfbxmWy1xDI5laxjKtgLXMWEfi-09HKkGHAqlSNGI/exec"}; localStorage.setItem("riki_gdrive_cfg", JSON.stringify(cfg)); show("s-login");
+};
+
+// ════════════════════════════
+// API — fetch to Apps Script
+// ════════════════════════════
+async function api(action, data={}) {
+  const body = JSON.stringify({action, ...data});
+  let res, json;
+  // Try direct
+  try {
+    res = await fetch(cfg.url, {method:'POST', body, redirect:'follow'});
+    json = await res.json();
+    if (!json.error) return json;
+  } catch(e) {}
+  // Fallback: CORS proxy
+  try {
+    res = await fetch('https://corsproxy.io/?'+encodeURIComponent(cfg.url), {method:'POST', body, redirect:'follow'});
+    json = await res.json();
+    return json;
+  } catch(e) {
+    throw new Error('เชื่อมต่อ Apps Script ไม่ได้ ตรวจสอบการ Deploy ด้วย');
+  }
+}
+
+// Image compress → base64
+function compress(file, maxW=1280, q=0.80) {
+  return new Promise(resolve => {
+    const r=new FileReader();
+    r.onload = ev => {
+      const img=new Image();
+      img.onload = () => {
+        const ratio=Math.min(maxW/img.width, maxW/img.height, 1);
+        const c=document.createElement('canvas');
+        c.width=img.width*ratio; c.height=img.height*ratio;
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg', q));
+      };
+      img.src=ev.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+// ════════════════════════════
+// CONFIG
+// ════════════════════════════
+async function saveConfig() {
+  const url = document.getElementById('cfg-url').value.trim();
+  if (!url) { toast('กรุณากรอก URL'); return; }
+  setLoad(true,'กำลังทดสอบการเชื่อมต่อ...');
+  try {
+    const res = await fetch(url, {redirect:'follow'});
+    const txt = await res.text();
+    if (!txt.includes('RIKI')) throw new Error('Response ไม่ถูกต้อง');
+    cfg = {url}; localStorage.setItem('riki_gdrive_cfg', JSON.stringify(cfg));
+    setLoad(false); show('s-login'); toast('✅ เชื่อมต่อสำเร็จ!');
+  } catch(e) {
+    setLoad(false);
+    document.getElementById('cfg-err').style.display='block';
+  }
+}
+
+// ════════════════════════════
+// AUTH
+// ════════════════════════════
+async function doLogin() {
+  const code = document.getElementById('l-code').value.trim().toUpperCase();
+  const pass = document.getElementById('l-pass').value;
+  if (!code||!pass) { toast('กรุณากรอกข้อมูลให้ครบ'); return; }
+  document.getElementById('l-err').style.display='none';
+  setLoad(true,'กำลังเข้าสู่ระบบ...');
+  try {
+    const r = await api('login', {code, password:pass});
+    if (r.error||!r.branch) { setLoad(false); document.getElementById('l-err').style.display='block'; return; }
+    user=r.branch; photos={};
+    setLoad(false);
+    if (user.is_admin) { await loadAdmin(); show('s-admin'); }
+    else { await loadWork(); show('s-work'); }
+  } catch(e) { setLoad(false); toast('❌ '+e.message); }
+}
+
+function doLogout() {
+  user=null; photos=[];
+  document.getElementById('l-pass').value='';
+  show('s-login');
+}
+
+// ════════════════════════════
+// ADMIN: BRANCHES
+// ════════════════════════════
+let _branches=[];
+async function loadAdmin() {
+  const {data} = await api('getBranches');
+  _branches = data||[];
+  renderBranches();
+  const sel=document.getElementById('task-branch-sel');
+  sel.innerHTML = _branches.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+}
+
+function renderBranches() {
+  document.getElementById('branch-list').innerHTML = _branches.length
+    ? _branches.map(b=>`
+      <div class="li">
+        <div class="row-sb">
+          <div><div class="li-title">${b.name}</div>
+          <div class="li-sub">รหัส: <b>${b.code}</b>${b.line_token?' &nbsp;• LINE ✅':''}</div></div>
+          <div class="row">
+            <button class="btn-sm" style="background:var(--blue);color:#fff" onclick="editBranch('${b.id}','${esc(b.name)}','${b.code}','${esc(b.line_token||'')}')">แก้ไข</button>
+            <button class="btn-sm btn-r" onclick="delBranch('${b.id}')">ลบ</button>
+          </div>
+        </div>
+      </div>`).join('')
+    : '<div style="text-align:center;color:var(--muted);padding:30px;font-size:14px">ยังไม่มีสาขา</div>';
+}
+
+function adminTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById('tab-branches').style.display = tab==='branches'?'block':'none';
+  document.getElementById('tab-tasks').style.display = tab==='tasks'?'block':'none';
+  if (tab==='tasks') loadTasksAdmin();
+}
+
+async function saveBranch() {
+  const id=document.getElementById('mb-id').value;
+  const name=document.getElementById('mb-name').value.trim();
+  const code=document.getElementById('mb-code').value.trim().toUpperCase();
+  const pass=document.getElementById('mb-pass').value;
+  const line=document.getElementById('mb-line').value.trim();
+  if (!name||!code) { showErr('mb-err','กรุณากรอกข้อมูลให้ครบ'); return; }
+  if (!id&&!pass) { showErr('mb-err','กรุณาตั้งรหัสผ่าน'); return; }
+  setLoad(true,'กำลังบันทึก...');
+  const r = await api('saveBranch', {id:id||undefined, name, code, password:pass||undefined, line_token:line});
+  setLoad(false);
+  if (r.error) { showErr('mb-err', r.error); return; }
+  closeModal('m-branch'); await loadAdmin(); toast('✅ บันทึกแล้ว');
+}
+
+async function delBranch(id) {
+  if (!confirm('ลบสาขานี้? ข้อมูลทั้งหมดของสาขาจะถูกลบ')) return;
+  setLoad(true,'กำลังลบ...');
+  await api('deleteBranch', {id});
+  setLoad(false); await loadAdmin(); toast('ลบแล้ว');
+}
+
+function editBranch(id, name, code, line) {
+  document.getElementById('mb-id').value=id;
+  document.getElementById('mb-name').value=name;
+  document.getElementById('mb-code').value=code;
+  document.getElementById('mb-pass').value='';
+  document.getElementById('mb-line').value=line;
+  openModal('m-branch');
+}
+
+// ════════════════════════════
+// ADMIN: TASKS
+// ════════════════════════════
+function setAS(s, el) {
+  adminShift=s;
+  document.querySelectorAll('#tab-tasks .chip').forEach(c=>c.classList.remove('act'));
+  el.classList.add('act');
+  loadTasksAdmin();
+}
+
+async function loadTasksAdmin() {
+  const bid = document.getElementById('task-branch-sel').value;
+  if (!bid) return;
+  setLoad(true,'โหลดรายการงาน...');
+  const {data:tasks} = await api('getTasks', {branch_id:bid, shift:adminShift});
+  setLoad(false);
+  const list=document.getElementById('task-admin-list');
+  list.innerHTML = (tasks&&tasks.length) ? tasks.map(t=>`
+    <div class="li">
+      <div class="row-sb">
+        <div><div class="li-title">${t.icon} ${t.title}</div><div class="li-sub">⏰ ${t.time_label} น.</div></div>
+        <div class="row">
+          <button class="btn-sm" style="background:var(--green);color:#fff" onclick="openAddItem('${t.id}')">+ รายการ</button>
+          <button class="btn-sm btn-r" onclick="delTask('${t.id}')">ลบ</button>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap">
+        ${(t.task_items||[]).map(it=>`
+          <div class="item-chip">📸 ${it.label}
+            <span onclick="delItem('${it.id}')" style="color:var(--red);cursor:pointer;font-size:15px;margin-left:4px">×</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('')
+    : '<div style="text-align:center;color:var(--muted);padding:30px;font-size:14px">ยังไม่มีงาน</div>';
+}
+
+async function saveTask() {
+  const bid=document.getElementById('task-branch-sel').value;
+  const time=document.getElementById('mt-time').value.trim();
+  const title=document.getElementById('mt-title').value.trim();
+  const icon=document.getElementById('mt-icon').value.trim()||'📋';
+  if (!time||!title) { showErr('mt-err','กรุณากรอกข้อมูลให้ครบ'); return; }
+  setLoad(true,'บันทึก...');
+  const r = await api('saveTask', {branch_id:bid, shift:adminShift, time_label:time, title, icon});
+  setLoad(false);
+  if (r.error) { showErr('mt-err', r.error); return; }
+  closeModal('m-task'); loadTasksAdmin(); toast('✅ เพิ่มงานแล้ว');
+}
+
+async function delTask(id) {
+  if (!confirm('ลบหัวข้องานนี้?')) return;
+  setLoad(true,'ลบ...');
+  await api('deleteTask', {id});
+  setLoad(false); loadTasksAdmin(); toast('ลบแล้ว');
+}
+
+function openAddItem(tid) {
+  document.getElementById('mi-tid').value=tid;
+  document.getElementById('mi-lbl').value='';
+  openModal('m-item');
+}
+
+async function saveItem() {
+  const tid=document.getElementById('mi-tid').value;
+  const label=document.getElementById('mi-lbl').value.trim();
+  if (!label) { showErr('mi-err','กรุณาระบุชื่อรายการ'); return; }
+  setLoad(true,'บันทึก...');
+  const r = await api('saveTaskItem', {task_id:tid, label});
+  setLoad(false);
+  if (r.error) { showErr('mi-err', r.error); return; }
+  closeModal('m-item'); loadTasksAdmin(); toast('✅ เพิ่มรายการแล้ว');
+}
+
+async function delItem(id) {
+  setLoad(true,'ลบ...');
+  await api('deleteTaskItem', {id});
+  setLoad(false); loadTasksAdmin(); toast('ลบแล้ว');
+}
+
+// ════════════════════════════
+// WORK SCREEN
+// ════════════════════════════
+async function loadWork() {
+  document.getElementById('w-name').textContent = '🏪 '+user.name;
+  setLoad(true,'โหลดรายการงานวันนี้...');
+  const today=getToday();
+  const [{data:tasks}, {data:ph}] = await Promise.all([
+    api('getTasks', {branch_id:user.id, shift}),
+    api('getPhotos', {branch_id:user.id, shift, report_date:today}),
+  ]);
+  allTasks = tasks||[];
+  photos = {};
+  (ph||[]).forEach(p=>{ photos[p.task_item_id]={url:p.public_url, fileId:p.file_id}; });
+  setLoad(false);
+  renderWork();
+}
+
+function switchShift(s) {
+  shift=s;
+  document.getElementById('cm').classList.toggle('act',s==='morning');
+  document.getElementById('ca').classList.toggle('act',s==='afternoon');
+  loadWork();
+}
+
+function renderWork() {
+  const body=document.getElementById('work-body');
+  body.innerHTML='';
+  let lastTime='';
+  allTasks.forEach((task,ti)=>{
+    const items=(task.task_items||[]);
+    const dc=items.filter(it=>photos[it.id]).length;
+    const done=items.length>0&&dc===items.length;
+    if (task.time_label!==lastTime) {
+      body.innerHTML+=`<div class="tlbl">⏰ ${task.time_label} น.</div>`;
+      lastTime=task.time_label;
+    }
+    const card=document.createElement('div');
+    card.className=`tc${done?' done':''}`;
+    card.id=`tc-${ti}`;
+    card.innerHTML=`
+      <div class="tc-hdr" onclick="toggleTask(${ti})">
+        <div class="t-ico">${task.icon}</div>
+        <div class="t-done">✅</div>
+        <div class="t-info">
+          <div class="t-title">${task.title}</div>
+          <div class="t-sub" id="tsub-${ti}">${dc}/${items.length} รายการ${done?' – เสร็จแล้ว':''}</div>
+        </div>
+        <div class="t-arr">▾</div>
+      </div>
+      <div class="tc-body" id="tbody-${ti}">
+        ${items.map(it=>{
+          const ok=!!photos[it.id];
+          return `<div class="pi${ok?' ok':''}" id="pi-${it.id}">
+            <div style="flex:1">
+              <div class="pi-lbl">📸 ${it.label}</div>
+              <div class="pi-status" id="pst-${it.id}"></div>
+            </div>
+            <img class="pi-thumb" id="thumb-${it.id}" src="${ok?photos[it.id].url:''}" alt="">
+            <button class="pi-btn" id="pbtn-${it.id}" onclick="trigCam('${it.id}',${ti})">${ok?'✅ ถ่ายใหม่':'📷 ถ่าย'}</button>
+            <input type="file" id="f-${it.id}" accept="image/*" capture="environment" onchange="handlePhoto(event,'${it.id}',${ti})">
+          </div>`;
+        }).join('')}
+      </div>`;
+    body.appendChild(card);
+    if (ti===0) card.classList.add('open');
+  });
+  updateProgress();
+}
+
+function toggleTask(ti) {
+  const c=document.getElementById('tc-'+ti);
+  c.classList.toggle('open');
+}
+
+function trigCam(itemId, ti) {
+  const c=document.getElementById('tc-'+ti);
+  if (!c.classList.contains('open')) c.classList.add('open');
+  document.getElementById('f-'+itemId).click();
+}
+
+async function handlePhoto(e, itemId, ti) {
+  const file=e.target.files[0];
+  if (!file) return;
+  // Show preview immediately
+  const raw = await compress(file);
+  const thumb=document.getElementById('thumb-'+itemId);
+  thumb.src=raw;
+  const pi=document.getElementById('pi-'+itemId);
+  pi.classList.add('ok');
+  const btn=document.getElementById('pbtn-'+itemId);
+  btn.textContent='⏳';
+  const st=document.getElementById('pst-'+itemId);
+  st.textContent='กำลังอัพโหลด Google Drive...'; st.style.display='block';
+  // Upload
+  try {
+    const today=getToday();
+    const r = await api('uploadPhoto', {
+      branch_id:user.id, task_item_id:itemId,
+      report_date:today, shift,
+      imageBase64:raw,
+      fileName:`${itemId}_${Date.now()}.jpg`
+    });
+    if (r.error) throw new Error(r.error);
+    photos[itemId]={url:r.url, fileId:r.fileId};
+    thumb.src=r.url;
+    btn.textContent='✅ ถ่ายใหม่';
+    st.textContent='✅ อัพโหลด Google Drive แล้ว';
+    setTimeout(()=>st.style.display='none', 2000);
+    updateTaskDone(ti); updateProgress();
+  } catch(err) {
+    btn.textContent='❌ ลองใหม่';
+    st.textContent='❌ อัพโหลดไม่สำเร็จ: '+err.message;
+    toast('❌ '+err.message);
+  }
+}
+
+function updateTaskDone(ti) {
+  const task=allTasks[ti];
+  const items=task.task_items||[];
+  const dc=items.filter(it=>photos[it.id]).length;
+  const done=items.length>0&&dc===items.length;
+  document.getElementById('tc-'+ti).classList.toggle('done',done);
+  document.getElementById('tsub-'+ti).textContent=`${dc}/${items.length} รายการ${done?' – เสร็จแล้ว':''}`;
+}
+
+function updateProgress() {
+  let total=0,done=0;
+  allTasks.forEach(t=>t.task_items.forEach(it=>{ total++; if(photos[it.id]) done++; }));
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('p-lbl').textContent=`${done} / ${total} รายการ`;
+  document.getElementById('p-pct').textContent=pct+'%';
+  document.getElementById('fab').style.display=(done>0&&done===total)?'block':'none';
+}
+
+// ════════════════════════════
+// DONE SCREEN
+// ════════════════════════════
+function goToDone() {
+  const now=new Date();
+  const date=now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  const time=now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const sn=shift==='morning'?'กะเช้า (07:30–16:30)':'กะบ่าย (13:00–22:00)';
+  let total=0; allTasks.forEach(t=>total+=t.task_items.length);
+  document.getElementById('done-sub').textContent=`${user.name} ส่งรายงานครบทุกขั้นตอน`;
+  document.getElementById('done-stats').innerHTML=`
+    <div class="stat-row"><span>สาขา</span><b style="color:var(--accent)">${user.name}</b></div>
+    <div class="stat-row"><span>กะ</span><b style="color:var(--accent)">${sn}</b></div>
+    <div class="stat-row"><span>วันที่</span><b>${date}</b></div>
+    <div class="stat-row"><span>เวลาเสร็จ</span><b>${time} น.</b></div>
+    <div class="stat-row"><span>งานทั้งหมด</span><b style="color:var(--green)">✅ ${allTasks.length} งาน / ${total} รูป</b></div>
+    <div class="stat-row"><span>ที่เก็บรูป</span><b>📁 Google Drive</b></div>`;
+  window._lineMsg=`✅ รายงาน${user.name}\n📅 ${date}  ⏰ ${time} น.\n🔄 ${sn}\n${'─'.repeat(22)}\n`
+    +allTasks.map((t,i)=>`${i+1}. ✅ ${t.icon} ${t.title}`).join('\n')
+    +`\n${'─'.repeat(22)}\n✅ ครบทุกขั้นตอน | รูปใน Google Drive`;
+  document.getElementById('line-res').style.display='none';
+  document.getElementById('line-btn').style.display=user.line_token?'block':'none';
+  show('s-done');
+}
+
+async function sendLine() {
+  if (!user.line_token) { toast('ไม่พบ LINE Channel Access Token'); return; }
+  const btn=document.getElementById('line-btn');
+  btn.innerHTML='⏳ กำลังส่ง...'; btn.disabled=true;
+  const res=document.getElementById('line-res');
+  try {
+    // LINE Notify ถูกปิดบริการแล้ว (31 มี.ค. 2025) — ส่งผ่าน Apps Script (server-side) ด้วย Messaging API แทน เพื่อเลี่ยงปัญหา CORS
+    const r = await api('sendLine', { token: user.line_token, message: window._lineMsg });
+    btn.disabled=false;
+    res.style.display='block';
+    if (r.success) {
+      btn.innerHTML='✅ ส่งแล้ว!'; btn.style.background='var(--g2)';
+      res.style.borderColor='var(--green)'; res.style.background='rgba(16,185,129,.1)'; res.style.color='var(--green)';
+      res.textContent='✅ ส่ง LINE แจ้งเตือนเรียบร้อยแล้ว! (ถึงทุกคนที่เพิ่มเพื่อน LINE OA นี้)';
+    } else {
+      throw new Error(r.error||'ส่งไม่สำเร็จ');
+    }
+  } catch(e) {
+    btn.disabled=false;
+    btn.innerHTML='📱 ลองใหม่';
+    res.style.display='block';
+    res.style.borderColor='var(--red)'; res.style.background='rgba(239,68,68,.1)'; res.style.color='var(--red)';
+    res.innerHTML=`⚠️ ส่งไม่สำเร็จ: ${e.message}<br><small>กด "คัดลอก" แล้วส่งใน LINE แทน</small>`;
+  }
+}
+
+function copyLineMsg() {
+  if (!window._lineMsg) return;
+  navigator.clipboard?.writeText(window._lineMsg)
+    .then(()=>toast('📋 คัดลอกแล้ว!'))
+    .catch(()=>{ const ta=document.createElement('textarea'); ta.value=window._lineMsg; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); toast('📋 คัดลอกแล้ว!'); });
+}
+
+// ════════════════════════════
+// MODALS & UTILS
+// ════════════════════════════
+function show(id) { document.querySelectorAll('.scr').forEach(s=>s.classList.remove('act')); document.getElementById(id).classList.add('act'); }
+function openModal(id) { document.getElementById(id).classList.add('act'); document.querySelectorAll(`#${id} .err`).forEach(e=>e.style.display='none'); }
+function closeModal(id) { document.getElementById(id).classList.remove('act'); }
+function oClose(e,id) { if (e.target===document.getElementById(id)) closeModal(id); }
+function showErr(id,msg) { const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; }
+function esc(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function getToday() { return new Date().toISOString().split('T')[0]; }
+function setLoad(on,txt='กำลังโหลด...') { const l=document.getElementById('loading'); l.classList.toggle('on',on); if(txt) document.getElementById('load-txt').textContent=txt; }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2800); }
+</script>
+</body>
+</html>
