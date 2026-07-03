@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#1B3A6B"/>
+<title>RIKI Daily Routine</title>
+<link rel="manifest" href="manifest.json"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --pri:#1B3A6B;--pri2:#2D5BA8;--pri-bg:#EEF3FB;
+  --acc:#F59E0B;--acc-bg:#FEF3C7;
+  --ok:#10B981;--ok-bg:#D1FAE5;
+  --err:#EF4444;--err-bg:#FEE2E2;
+  --warn:#F97316;--warn-bg:#FFEDD5;
+  --pur:#7C3AED;--pur-bg:#EDE9FE;
+  --txt:#1F2937;--txt2:#6B7280;--txt3:#9CA3AF;
+  --bg:#F3F4F6;--white:#FFFFFF;--bdr:#E5E7EB;
+  --r:10px;--rl:16px;--rx:24px;
+  --sh:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shl:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit}
+a{color:inherit;text-decoration:none}
+img{display:block}
+
+/* ---- SCREENS ---- */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.on{display:flex}
+
+/* ---- LOGIN ---- */
+#s-login{background:linear-gradient(160deg,var(--pri) 0%,var(--pri2) 100%);justify-content:center;align-items:center;padding:1.5rem;min-height:100vh}
+.lcard{background:var(--white);border-radius:var(--rx);padding:2rem;width:100%;max-width:360px;box-shadow:var(--shl)}
+.llogo{width:60px;height:60px;background:var(--pri);border-radius:var(--rl);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;color:#fff;font-size:1.625rem;font-weight:700}
+.ltitle{text-align:center;font-size:1.25rem;font-weight:700;color:var(--pri);margin-bottom:.25rem}
+.lsub{text-align:center;font-size:.8rem;color:var(--txt2);margin-bottom:1.5rem}
+.fg{margin-bottom:.875rem}
+.fl{display:block;font-size:.8rem;font-weight:600;color:var(--txt);margin-bottom:.375rem}
+.fi{width:100%;padding:.625rem .875rem;border:1.5px solid var(--bdr);border-radius:var(--r);font-size:.938rem;color:var(--txt);transition:border .2s}
+.fi:focus{outline:none;border-color:var(--pri2)}
+.fsel{width:100%;padding:.625rem .875rem;border:1.5px solid var(--bdr);border-radius:var(--r);font-size:.875rem;color:var(--txt);background:var(--white)}
+.btn-pri{width:100%;padding:.75rem;background:var(--pri);color:#fff;border-radius:var(--r);font-size:.938rem;font-weight:600;margin-top:.5rem;transition:opacity .2s}
+.btn-pri:active{opacity:.85}
+.btn-pri:disabled{opacity:.5;cursor:not-allowed}
+
+/* ---- TOPBAR ---- */
+.topbar{background:var(--pri);color:#fff;padding:.875rem 1rem;display:flex;align-items:center;gap:.625rem;position:sticky;top:0;z-index:100}
+.tbback{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.125rem;flex-shrink:0}
+.tbtitle{flex:1;font-size:.938rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbsub{font-size:.688rem;opacity:.8}
+.tbbtn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.rbadge{padding:.2rem .5rem;border-radius:20px;font-size:.625rem;font-weight:700}
+.r-sa{background:rgba(239,68,68,.3);color:#FCA5A5}
+.r-ed{background:rgba(124,58,237,.3);color:#C4B5FD}
+.r-us{background:rgba(16,185,129,.3);color:#6EE7B7}
+.r-vi{background:rgba(255,255,255,.2);color:#fff}
+
+/* ---- TABS ---- */
+.tabs{display:flex;gap:.5rem;overflow-x:auto;padding:.625rem 1rem;scrollbar-width:none;background:var(--white);border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:.375rem .75rem;border-radius:20px;font-size:.75rem;font-weight:600;color:var(--txt2);border:1.5px solid var(--bdr);white-space:nowrap;cursor:pointer;transition:all .2s}
+.tab.on{background:var(--pri-bg);color:var(--pri);border-color:var(--pri2)}
+
+/* ---- BOTTOM NAV ---- */
+.bnav{background:var(--white);border-top:1px solid var(--bdr);display:flex;padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:100}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.375rem .25rem;font-size:.563rem;font-weight:600;color:var(--txt3);cursor:pointer}
+.bni.on{color:var(--pri)}
+.bni-icon{font-size:1.25rem}
+.bni-dot{width:6px;height:6px;border-radius:50%;background:var(--err);position:absolute;top:0;right:0}
+.bni-rel{position:relative}
+
+/* ---- CONTENT ---- */
+.content{flex:1;overflow-y:auto;padding-bottom:1rem}
+.sec{padding:1rem}
+.sec-title{font-size:.688rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.625rem}
+
+/* ---- CARDS ---- */
+.card{background:var(--white);border-radius:var(--rl);padding:1rem;box-shadow:var(--sh);margin-bottom:.75rem}
+.card-sm{background:var(--white);border-radius:var(--r);padding:.875rem;box-shadow:var(--sh);margin-bottom:.5rem}
+
+/* ---- STATS ---- */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;padding:1rem}
+.stat{background:var(--white);border-radius:var(--rl);padding:1rem;box-shadow:var(--sh)}
+.stat-n{font-size:1.75rem;font-weight:700;line-height:1}
+.stat-l{font-size:.688rem;color:var(--txt2);margin-top:.25rem}
+
+/* ---- PROGRESS ---- */
+.pbar{height:8px;background:var(--bdr);border-radius:4px;overflow:hidden;margin:.5rem 0}
+.pfill{height:100%;border-radius:4px;transition:width .4s}
+.p-blue{background:var(--pri2)}
+.p-green{background:var(--ok)}
+.p-amber{background:var(--acc)}
+
+/* ---- SHIFT HEADER ---- */
+.shift-hdr{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem .25rem}
+.shift-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.shift-nm{font-size:.813rem;font-weight:700}
+.shift-pr{font-size:.75rem;color:var(--txt2);margin-left:auto}
+
+/* ---- TASK ITEM ---- */
+.titem{display:flex;align-items:flex-start;gap:.625rem;padding:.75rem 1rem;background:var(--white);border-radius:var(--r);margin-bottom:.375rem;box-shadow:var(--sh);cursor:pointer;transition:transform .1s}
+.titem:active{transform:scale(.99)}
+.tchk{width:26px;height:26px;border-radius:50%;border:2px solid var(--bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.875rem;margin-top:2px}
+.tchk.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.tchk.rev{background:var(--err-bg);border-color:var(--err);color:var(--err)}
+.tchk.pend{background:var(--acc-bg);border-color:var(--acc)}
+.tinfo{flex:1;min-width:0}
+.tname{font-size:.875rem;font-weight:600;color:var(--txt);margin-bottom:.2rem}
+.tmeta{font-size:.75rem;color:var(--txt2)}
+.tarr{color:var(--txt3);font-size:1rem;align-self:center;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:20px;font-size:.688rem;font-weight:600}
+.b-done{background:var(--ok-bg);color:#065F46}
+.b-pend{background:var(--acc-bg);color:#92400E}
+.b-rev{background:var(--err-bg);color:#991B1B}
+.b-new{background:var(--pri-bg);color:var(--pri)}
+.other-pill{background:var(--pur-bg);color:var(--pur);padding:.1rem .375rem;border-radius:10px;font-size:.625rem;font-weight:600;margin-left:.25rem}
+
+/* ---- PHOTO GRID ---- */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.75rem 0}
+.pslot{aspect-ratio:1;border-radius:var(--r);overflow:hidden;position:relative;background:var(--bg);border:1.5px dashed var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s}
+.pslot.has{border-style:solid;border-color:var(--ok)}
+.pslot:active{border-color:var(--pri)}
+.pslot-icon{font-size:1.375rem;color:var(--txt3);margin-bottom:.25rem}
+.pslot-lbl{font-size:.563rem;color:var(--txt2);text-align:center;padding:0 .25rem;line-height:1.3}
+.pslot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.pslot-ok{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--ok);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.625rem}
+
+/* ---- DETAIL BARS ---- */
+.detbar{padding:1rem;background:var(--white);border-top:1px solid var(--bdr)}
+.btn-full{width:100%;padding:.75rem;border-radius:var(--rl);font-size:.938rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.5rem;transition:opacity .2s}
+.btn-full:disabled{opacity:.5}
+.btn-full:active:not(:disabled){opacity:.85}
+.btn-green{background:var(--ok);color:#fff}
+.btn-blue{background:var(--pri);color:#fff}
+.btn-out{background:transparent;border:1.5px solid var(--pri);color:var(--pri)}
+.btn-red{background:var(--err);color:#fff}
+.act-row{display:flex;gap:.5rem}
+.act-row button{flex:1;padding:.625rem;border-radius:var(--r);font-size:.813rem;font-weight:600}
+
+/* ---- REVIEW ---- */
+.rev-item{background:var(--white);border-radius:var(--rl);margin-bottom:.75rem;overflow:hidden;box-shadow:var(--sh)}
+.rev-hdr{padding:.875rem 1rem;display:flex;align-items:center;gap:.625rem;cursor:pointer}
+.rev-body{border-top:1px solid var(--bdr);padding:.75rem 1rem}
+.rev-task{display:flex;align-items:flex-start;gap:.625rem;padding:.5rem 0;border-bottom:1px solid var(--bdr)}
+.rev-task:last-child{border-bottom:none}
+.rev-photos{display:flex;gap:.375rem;margin:.5rem 0;flex-wrap:wrap}
+.rev-photo{width:56px;height:56px;border-radius:8px;background:var(--bg);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.375rem;cursor:pointer;overflow:hidden}
+.rev-photo img{width:100%;height:100%;object-fit:cover}
+
+/* ---- ADMIN ---- */
+.adm-row{display:flex;align-items:center;gap:.625rem;padding:.625rem 0;border-bottom:1px solid var(--bdr)}
+.adm-row:last-child{border-bottom:none}
+.adm-av{width:38px;height:38px;border-radius:50%;background:var(--pri-bg);color:var(--pri);display:flex;align-items:center;justify-content:center;font-size:.938rem;font-weight:700;flex-shrink:0}
+.adm-info{flex:1;min-width:0}
+.adm-name{font-size:.875rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-meta{font-size:.75rem;color:var(--txt2)}
+
+/* ---- MODAL ---- */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal-sh{background:var(--white);border-radius:var(--rx) var(--rx) 0 0;width:100%;max-width:430px;max-height:88vh;overflow-y:auto;padding:1.5rem;animation:su .25s ease}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:36px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 1.25rem}
+.mtitle{font-size:1rem;font-weight:700;margin-bottom:1rem}
+
+/* ---- TOAST ---- */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1F2937;color:#fff;padding:.625rem 1.25rem;border-radius:var(--rl);font-size:.813rem;z-index:300;white-space:nowrap;max-width:90vw;animation:tfade 3s forwards}
+@keyframes tfade{0%{opacity:0;transform:translateX(-50%) translateY(10px)}10%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+
+/* ---- MISC ---- */
+.empty{text-align:center;padding:3rem 1rem;color:var(--txt2)}
+.empty-icon{font-size:2.5rem;margin-bottom:.75rem}
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--txt2);font-size:.875rem;gap:.75rem}
+.spinner{width:32px;height:32px;border:3px solid var(--bdr);border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.realtime{font-size:.688rem;opacity:.8;display:flex;align-items:center;gap:.25rem}
+.rtdot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rev-note{background:var(--err-bg);border-radius:var(--r);padding:.625rem .875rem;margin-bottom:.75rem;font-size:.813rem;color:#991B1B}
+.ok-note{background:var(--ok-bg);border-radius:var(--r);padding:.625rem .875rem;margin-bottom:.75rem;font-size:.813rem;color:#065F46}
+.viewer-bar{background:var(--txt);color:#fff;text-align:center;padding:.5rem;font-size:.75rem}
+input[type=file]{display:none}
+.line-preview{background:#06C755;color:#fff;border-radius:var(--rl);padding:1rem;margin:.75rem 0}
+.line-hdr{font-size:.688rem;opacity:.8;margin-bottom:.375rem}
+.line-msg{font-size:.875rem;font-weight:600;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- ======== LOGIN ======== -->
+<div class="screen on" id="s-login">
+<div class="lcard">
+  <div class="llogo">R</div>
+  <div class="ltitle">RIKI Daily Routine</div>
+  <div class="lsub">ระบบติดตามงานประจำวัน v2.0</div>
+  <div class="fg">
+    <label class="fl">อีเมล</label>
+    <input class="fi" id="l-email" type="email" placeholder="email@example.com" autocomplete="email"/>
+  </div>
+  <div class="fg">
+    <label class="fl">รหัสผ่าน</label>
+    <div style="position:relative">
+      <input class="fi" id="l-pass" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" style="padding-right:2.75rem"/>
+      <button type="button" onclick="togglePw()" id="pw-eye" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:1.125rem;line-height:1;color:var(--txt3);background:none;border:none;cursor:pointer" title="แสดง/ซ่อนรหัสผ่าน">👁</button>
+    </div>
+  </div>
+  <button class="btn-pri" id="l-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+  <div id="l-err" style="color:var(--err);font-size:.8rem;text-align:center;margin-top:.75rem;display:none"></div>
+  <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--bdr);text-align:center">
+    <a href="?viewer=1" style="font-size:.8rem;color:var(--pri)">👁 ดูโหมด Viewer (ไม่ต้อง login)</a>
+  </div>
+</div>
+</div>
+
+<!-- ======== MAIN APP ======== -->
+<div class="screen" id="s-main">
+  <div id="viewer-bar" style="display:none" class="viewer-bar">👁 โหมดดูเท่านั้น — ไม่ต้องล็อคอิน</div>
+  <div class="topbar" id="main-tb">
+    <div style="flex:1">
+      <div class="tbtitle" id="tb-title">RIKI Daily Routine</div>
+      <div class="realtime"><div class="rtdot"></div><span id="tb-sub">กำลังโหลด...</span></div>
+    </div>
+    <div id="tb-badge" class="rbadge r-us">User</div>
+    <button class="tbbtn" onclick="showProfile()" title="โปรไฟล์">👤</button>
+  </div>
+  <div class="tabs" id="main-tabs">
+    <div class="tab on" id="tab-tasks"  onclick="setTab('tasks')">📋 งานวันนี้</div>
+    <div class="tab"    id="tab-review" onclick="setTab('review')" style="display:none">🔍 ตรวจงาน</div>
+    <div class="tab"    id="tab-admin"  onclick="setTab('admin')"  style="display:none">⚙️ จัดการ</div>
+    <div class="tab"    id="tab-report" onclick="setTab('report')">📊 รายงาน</div>
+  </div>
+  <div class="content" id="main-content"><div class="loader"><div class="spinner"></div>กำลังโหลด...</div></div>
+  <div class="bnav">
+    <div class="bni on" id="bn-home"   onclick="setTab('tasks')"><div class="bni-icon">🏠</div>หน้าหลัก</div>
+    <div class="bni"    id="bn-review" onclick="setTab('review')" style="display:none"><div class="bni-rel"><div class="bni-icon">🔍</div><div id="rev-dot" class="bni-dot" style="display:none"></div></div>ตรวจงาน</div>
+    <div class="bni"    id="bn-admin"  onclick="setTab('admin')"  style="display:none"><div class="bni-icon">⚙️</div>จัดการ</div>
+    <div class="bni"    id="bn-report" onclick="setTab('report')"><div class="bni-icon">📊</div>รายงาน</div>
+  </div>
+</div>
+
+<!-- ======== DETAIL SCREEN ======== -->
+<div class="screen" id="s-detail">
+  <div class="topbar">
+    <button class="tbback" onclick="back()">←</button>
+    <div style="flex:1">
+      <div class="tbtitle" id="det-title">งาน</div>
+      <div class="tbsub" id="det-sub">07:30 · กะเช้า</div>
+    </div>
+    <div id="det-badge" class="badge b-new">ใหม่</div>
+  </div>
+  <div class="content" id="det-content"></div>
+</div>
+
+<!-- ======== MODAL ======== -->
+<div class="modal-ov" id="modal" style="display:none" onclick="closeModal(event)">
+  <div class="modal-sh"><div class="mhandle"></div><div id="modal-body"></div></div>
+</div>
+
+<!-- Hidden file input for photo capture -->
+<input type="file" id="photo-input" accept="image/*" capture="environment" onchange="onPhotoSelected(event)"/>
+
+<script>
+// ================================================================
+//  CONFIG — แก้ไข URL ของ Apps Script ตรงนี้
+// ================================================================
+const API = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
+
+// ================================================================
+//  STATE
+// ================================================================
+const S = {
+  user: null, token: null, role: null,
+  currentTab: 'tasks', currentTask: null,
+  photos: {},       // taskId -> [{url, fileId}]
+  tasks: [],
+  branchId: null, branchName: null,
+  date: todayStr(),
+  isViewer: false,
+  photoTargetTask: null, photoTargetIdx: null,
+  pollTimer: null,
+};
+
+// ================================================================
+//  INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  if (params.get('viewer') === '1') {
+    S.isViewer = true;
+    const bid = params.get('branch') || '';
+    S.branchId = bid;
+    activateViewer(bid);
+    return;
+  }
+  // Try restore session
+  const saved = localStorage.getItem('riki_session');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      if (s.token && s.user && new Date(s.expiresAt) > new Date()) {
+        S.token = s.token; S.user = s.user;
+        activateApp();
+        return;
+      }
+    } catch {}
+  }
+});
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// ================================================================
+//  API CALL
+// ================================================================
+async function api(action, body = {}) {
+  const payload = { action, token: S.token, ...body };
+  const res = await fetch(API, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+// ================================================================
+//  AUTH
+// ================================================================
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const btn   = document.getElementById('l-btn');
+  const err   = document.getElementById('l-err');
+
+  if (!email || !pass) { showErr('กรุณากรอกข้อมูลให้ครบ'); return; }
+  btn.disabled = true; btn.textContent = 'กำลังเข้าสู่ระบบ...';
+  err.style.display = 'none';
+
+  try {
+    const r = await api('login', { email, password: pass });
+    if (r.success) {
+      S.token = r.token; S.user = r.user;
+      localStorage.setItem('riki_session', JSON.stringify({ token: r.token, user: r.user, expiresAt: r.expiresAt }));
+      activateApp();
+    } else {
+      showErr(r.error || 'เข้าสู่ระบบไม่สำเร็จ');
+    }
+  } catch { showErr('เชื่อมต่อไม่ได้ กรุณาตรวจสอบ URL ของ Apps Script'); }
+  finally { btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ'; }
+
+  function showErr(msg) {
+    err.textContent = '⚠️ ' + msg; err.style.display = 'block';
+  }
+}
+
+function activateApp() {
+  const u = S.user;
+  S.branchId = u.branchId; S.branchName = u.branchName;
+
+  // UI setup
+  document.getElementById('tb-title').textContent = u.role === 'superadmin' || u.role === 'editor' ? 'ภาพรวมทุกสาขา' : (u.branchName || 'สาขา');
+  document.getElementById('tb-sub').textContent  = u.name + ' · ' + roleLabel(u.role);
+  const badge = document.getElementById('tb-badge');
+  badge.textContent = roleLabel(u.role);
+  badge.className = 'rbadge r-' + u.role.substring(0,2);
+
+  // Show/hide tabs based on role
+  if (u.role === 'editor' || u.role === 'superadmin') {
+    document.getElementById('tab-review').style.display = '';
+    document.getElementById('bn-review').style.display  = '';
+    document.getElementById('rev-dot').style.display    = 'block';
+  }
+  if (u.role === 'superadmin') {
+    document.getElementById('tab-admin').style.display = '';
+    document.getElementById('bn-admin').style.display  = '';
+  }
+
+  show('s-main');
+  setTab('tasks');
+  startPolling();
+}
+
+function activateViewer(bid) {
+  document.getElementById('viewer-bar').style.display = 'block';
+  document.getElementById('tb-badge').textContent = 'Viewer';
+  document.getElementById('tb-badge').className = 'rbadge r-vi';
+  document.getElementById('tb-sub').textContent = 'โหมดดูเท่านั้น';
+  show('s-main');
+  setTab('tasks');
+}
+
+async function logout() {
+  if (S.token) await api('logout', {}).catch(() => {});
+  localStorage.removeItem('riki_session');
+  clearInterval(S.pollTimer);
+  S.token = null; S.user = null;
+  closeModal();
+  show('s-login');
+}
+
+// ================================================================
+//  NAVIGATION
+// ================================================================
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function back() { show('s-main'); renderTab(S.currentTab); }
+
+function setTab(tab) {
+  S.currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.bni').forEach(n => n.classList.remove('on'));
+  const tabEl = document.getElementById('tab-'+tab);
+  if (tabEl) tabEl.classList.add('on');
+  const bnMap = {tasks:'bn-home',review:'bn-review',admin:'bn-admin',report:'bn-report'};
+  const bn = document.getElementById(bnMap[tab]);
+  if (bn) bn.classList.add('on');
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  const c = document.getElementById('main-content');
+  c.innerHTML = '<div class="loader"><div class="spinner"></div>กำลังโหลด...</div>';
+  if      (tab === 'tasks')  loadTasks();
+  else if (tab === 'review') loadReview();
+  else if (tab === 'admin')  loadAdmin();
+  else if (tab === 'report') loadReport();
+}
+
+// ================================================================
+//  TASKS TAB
+// ================================================================
+async function loadTasks() {
+  try {
+    const params = S.isViewer
+      ? { action: 'viewer', branchId: S.branchId, date: S.date }
+      : {};
+    const r = S.isViewer
+      ? await api('viewer', { branchId: S.branchId, date: S.date })
+      : await api('getDailyTasks', { branchId: S.branchId, date: S.date });
+
+    if (!r.success) { document.getElementById('main-content').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>' + r.error + '</div>'; return; }
+    S.tasks = r.tasks || [];
+    renderTasks(r);
+  } catch (e) {
+    document.getElementById('main-content').innerHTML = '<div class="empty"><div class="empty-icon">📡</div>เชื่อมต่อไม่ได้<br><small>' + e + '</small></div>';
+  }
+}
+
+function renderTasks(r) {
+  const tasks = r.tasks || [];
+  const { total = 0, done = 0 } = r.stats || {};
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+  let html = `
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-n" style="color:var(--ok)">${done}</div><div class="stat-l">เสร็จแล้ว / ${total} งาน</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--pri)">${pct}%</div><div class="stat-l">ความคืบหน้า</div></div>
+    </div>
+    <div style="padding:0 1rem .5rem"><div class="pbar"><div class="pfill ${pct===100?'p-green':'p-blue'}" style="width:${pct}%"></div></div></div>`;
+
+  if (!S.isViewer) {
+    // Date picker
+    html += `<div style="padding:0 1rem .75rem;display:flex;align-items:center;gap:.5rem">
+      <input type="date" value="${S.date}" onchange="changeDate(this.value)" style="flex:1;padding:.375rem .625rem;border:1.5px solid var(--bdr);border-radius:var(--r);font-size:.813rem"/>
+      <button onclick="loadTasks()" style="padding:.375rem .625rem;background:var(--pri-bg);color:var(--pri);border-radius:var(--r);font-size:.813rem;font-weight:600">โหลด</button>
+    </div>`;
+  }
+
+  ['morning','afternoon'].forEach(shift => {
+    const st = tasks.filter(t => t.shift === shift);
+    if (!st.length) return;
+    const sdone = st.filter(t => ['submitted','approved'].includes(t.submission?.status)).length;
+    const sinfo = { morning: { label: 'กะเช้า', color: '#F59E0B', time: '07:30-16:30' }, afternoon: { label: 'กะบ่าย', color: '#7C3AED', time: '13:00-22:00' } }[shift];
+    html += `<div class="shift-hdr"><div class="shift-dot" style="background:${sinfo.color}"></div><span class="shift-nm" style="color:${sinfo.color}">${sinfo.label} (${sinfo.time})</span><span class="shift-pr">${sdone}/${st.length}</span></div>`;
+    html += `<div style="padding:0 .75rem">`;
+    st.forEach(t => {
+      const sub = t.submission;
+      const st2 = sub?.status || 'new';
+      const chkCls = {submitted:'done',approved:'done',revision:'rev',new:''}[st2] || '';
+      const chkIcon = {submitted:'✓',approved:'✓',revision:'↩',new:''}[st2] || '';
+      const badgeCls = {submitted:'b-done',approved:'b-done',revision:'b-rev',new:'b-new'}[st2] || 'b-new';
+      const badgeTxt = {submitted:'✓ ส่งแล้ว',approved:'✅ อนุมัติ',revision:'↩ แก้ไข',new:'⏳ รอ'}[st2] || '⏳ รอ';
+      const border = st2 === 'revision' ? 'border-left:3px solid var(--err)' : '';
+      const otherPill = sub?.submittedBy && sub.submittedBy !== S.user?.name ? `<span class="other-pill">โดย ${sub.submittedBy}</span>` : '';
+      html += `<div class="titem" style="${border}" onclick="openTask('${t.id}')">
+        <div class="tchk ${chkCls}">${chkIcon}</div>
+        <div class="tinfo">
+          <div class="tname">${t.name}</div>
+          <div class="tmeta">📷 ${(t.photoRequirements||[]).length} รูป · ${t.time} น.${otherPill}</div>
+          <div style="display:flex;align-items:center;gap:.25rem;margin-top:.25rem;flex-wrap:wrap">
+            <span class="badge ${badgeCls}">${badgeTxt}</span>
+            ${sub?.submittedAt ? `<span style="font-size:.688rem;color:var(--txt3)">${sub.submittedAt.substring(11,16)} น.</span>` : ''}
+          </div>
+          ${st2==='revision'&&sub?.reviewComment?`<div style="font-size:.75rem;color:var(--err);margin-top:.25rem">⚠️ ${sub.reviewComment}</div>`:''}
+        </div>
+        <div class="tarr">›</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function changeDate(v) { S.date = v; }
+
+// ================================================================
+//  TASK DETAIL
+// ================================================================
+function openTask(id) {
+  const task = S.tasks.find(t => t.id === id);
+  if (!task) return;
+  S.currentTask = task;
+  const sub = task.submission;
+  const status = sub?.status || 'new';
+  const isReadonly = S.isViewer || (S.user?.role === 'editor' && status !== 'revision');
+  const isDone = status === 'submitted' || status === 'approved';
+  const isRevision = status === 'revision';
+
+  if (!S.photos[id]) S.photos[id] = [];
+  const photos = S.photos[id];
+  const reqs   = task.photoRequirements || [];
+
+  // Topbar
+  document.getElementById('det-title').textContent = task.name;
+  document.getElementById('det-sub').textContent   = task.time + ' น. · ' + (task.shift === 'morning' ? 'กะเช้า' : 'กะบ่าย');
+  const db = document.getElementById('det-badge');
+  db.textContent = {submitted:'ส่งแล้ว',approved:'อนุมัติ',revision:'แก้ไข',new:'ใหม่'}[status] || 'ใหม่';
+  db.className = 'badge ' + {submitted:'b-done',approved:'b-done',revision:'b-rev',new:'b-new'}[status];
+
+  let html = '<div style="padding:1rem">';
+  if (isRevision && sub?.reviewComment) {
+    html += `<div class="rev-note">⚠️ <b>หมายเหตุจาก Editor:</b><br>${sub.reviewComment}</div>`;
+  }
+  if (isDone && sub?.submittedBy) {
+    html += `<div class="ok-note">✅ ส่งงานแล้วโดย <b>${sub.submittedBy}</b> เวลา ${sub.submittedAt?.substring(11,16)} น.</div>`;
+  }
+
+  // Photo grid
+  html += `<div style="font-size:.75rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">รูปที่ต้องส่ง (${reqs.length} รูป)</div>`;
+  html += '<div class="pgrid">';
+  reqs.forEach((req, i) => {
+    const p = photos[i];
+    const existUrl = isDone && sub?.photos?.[i]?.url;
+    const url = p?.url || existUrl;
+    const clickable = !isReadonly && !isDone;
+    const onclick = clickable ? `openCamera('${id}',${i})` : '';
+    html += `<div class="pslot ${url ? 'has' : ''}" onclick="${onclick}" id="pslot-${id}-${i}">
+      ${url ? `<img src="${url}" alt="${req}" loading="lazy"/><div class="pslot-ok">✓</div>`
+             : `<div class="pslot-icon">${req.startsWith('📹') ? '📹' : '📷'}</div><div class="pslot-lbl">${req.replace('📹 ','')}</div>`}
+    </div>`;
+  });
+  html += '</div>';
+
+  // Remark
+  html += `<div style="font-size:.75rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin:.75rem 0 .5rem">หมายเหตุ</div>`;
+  if (!isReadonly && !isDone) {
+    html += `<textarea id="remark-${id}" class="fi" rows="3" placeholder="เพิ่มหมายเหตุ (ถ้ามี)..." style="width:100%;resize:none;min-height:72px">${isRevision?'แก้ไขแล้ว: ':''}</textarea>`;
+  } else {
+    html += `<div style="padding:.625rem .875rem;background:var(--bg);border-radius:var(--r);font-size:.875rem;color:var(--txt2)">${sub?.remark || '—'}</div>`;
+  }
+  html += '</div>';
+  document.getElementById('det-content').innerHTML = html;
+
+  // Bottom bar
+  let barHtml = '<div class="detbar">';
+  if (!isReadonly && !isDone) {
+    const uploaded = photos.filter(p => p?.url).length;
+    const pct = reqs.length > 0 ? Math.round(uploaded / reqs.length * 100) : 0;
+    barHtml += `<div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--txt2);margin-bottom:.25rem">
+      <span>อัพโหลดรูปแล้ว ${uploaded}/${reqs.length}</span><span style="font-weight:600;color:var(--pri)">${pct}%</span></div>
+      <div class="pbar" style="margin-bottom:.75rem"><div class="pfill p-blue" style="width:${pct}%"></div></div>`;
+    barHtml += `<button class="btn-full btn-green" id="sub-btn" ${uploaded < reqs.length ? 'disabled' : ''} onclick="submitTask('${id}')">
+      📤 ส่งงาน (${uploaded}/${reqs.length} รูป)</button>
+      <button class="btn-full btn-out" onclick="captureAllDemo('${id}')">📷 ทดสอบ: จำลองถ่ายรูปทั้งหมด</button>`;
+  } else if (S.user?.role === 'editor' && !isReadonly) {
+    barHtml += `<div class="act-row">
+      <button class="btn-green" onclick="doReview('${id}','approved','')">✅ อนุมัติ</button>
+      <button class="btn-red"   onclick="openReviseModal('${id}')">↩ ส่งแก้ไข</button>
+    </div>`;
+  }
+  barHtml += '</div>';
+
+  // Append bar to detail content
+  document.getElementById('det-content').insertAdjacentHTML('beforeend', barHtml);
+  show('s-detail');
+}
+
+// ================================================================
+//  PHOTO CAPTURE
+// ================================================================
+function openCamera(taskId, idx) {
+  S.photoTargetTask = taskId;
+  S.photoTargetIdx  = idx;
+  document.getElementById('photo-input').click();
+}
+
+async function onPhotoSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const taskId = S.photoTargetTask;
+  const idx    = S.photoTargetIdx;
+
+  showToast('⏳ กำลังอัพโหลดรูป...');
+
+  try {
+    // Compress
+    const b64 = await compressImage(file, 1200, 0.75);
+    const r   = await api('uploadPhoto', {
+      base64: b64, filename: `${taskId}_${idx}_${Date.now()}.jpg`,
+      branchId: S.branchId, date: S.date, taskId,
+    });
+
+    if (!r.success) throw new Error(r.error);
+    if (!S.photos[taskId]) S.photos[taskId] = [];
+    S.photos[taskId][idx] = { url: r.url, fileId: r.fileId };
+
+    // Refresh slot
+    const slot = document.getElementById(`pslot-${taskId}-${idx}`);
+    if (slot) {
+      slot.className = 'pslot has';
+      slot.innerHTML = `<img src="${r.url}" loading="lazy"/><div class="pslot-ok">✓</div>`;
+    }
+    updateSubmitBtn(taskId);
+    showToast('✅ อัพโหลดรูปเรียบร้อย');
+  } catch (err) {
+    showToast('❌ อัพโหลดไม่สำเร็จ: ' + err.message);
+  }
+  e.target.value = '';
+}
+
+function updateSubmitBtn(taskId) {
+  const task = S.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  const reqs     = task.photoRequirements || [];
+  const uploaded = (S.photos[taskId] || []).filter(p => p?.url).length;
+  const btn = document.getElementById('sub-btn');
+  if (btn) {
+    btn.disabled = uploaded < reqs.length;
+    btn.textContent = `📤 ส่งงาน (${uploaded}/${reqs.length} รูป)`;
+  }
+}
+
+// Simulate capture for demo/testing
+async function captureAllDemo(taskId) {
+  const task = S.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  const reqs = task.photoRequirements || [];
+  showToast('⏳ กำลังสร้างรูปทดสอบ...');
+  reqs.forEach((req, i) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 400; canvas.height = 300;
+    const ctx = canvas.getContext('2d');
+    const colors = ['#EEF3FB','#D1FAE5','#FEF3C7','#EDE9FE','#FEE2E2','#F0FDF4'];
+    ctx.fillStyle = colors[i % colors.length]; ctx.fillRect(0,0,400,300);
+    ctx.font = '60px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(['📷','🏪','💰','🧹','📋','💡'][i%6], 200, 140);
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.font = '13px sans-serif';
+    ctx.fillText(req.substring(0,30), 200, 220);
+    ctx.fillText(new Date().toLocaleTimeString('th'), 200, 240);
+    if (!S.photos[taskId]) S.photos[taskId] = [];
+    S.photos[taskId][i] = { url: canvas.toDataURL(), fileId: 'demo_'+i };
+    const slot = document.getElementById(`pslot-${taskId}-${i}`);
+    if (slot) { slot.className = 'pslot has'; slot.innerHTML = `<img src="${canvas.toDataURL()}" loading="lazy"/><div class="pslot-ok">✓</div>`; }
+  });
+  updateSubmitBtn(taskId);
+  showToast('✅ จำลองรูปทดสอบเรียบร้อย (ใช้กล้องจริงใน Production)');
+}
+
+// Compress image
+function compressImage(file, maxPx, quality) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const cv = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxPx || h > maxPx) {
+          if (w > h) { h = h * maxPx / w; w = maxPx; }
+          else { w = w * maxPx / h; h = maxPx; }
+        }
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        res(cv.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+// ================================================================
+//  SUBMIT TASK
+// ================================================================
+async function submitTask(taskId) {
+  const remark = document.getElementById('remark-'+taskId)?.value || '';
+  const photos = S.photos[taskId] || [];
+  const btn = document.getElementById('sub-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'กำลังส่ง...'; }
+
+  try {
+    const r = await api('submitTask', {
+      taskId, branchId: S.branchId, date: S.date,
+      photos: photos.map(p => ({ url: p?.url, fileId: p?.fileId })),
+      remark,
+    });
+    if (r.success) {
+      showToast('✅ ส่งงานเรียบร้อย!');
+      back();
+      loadTasks();
+    } else {
+      showToast('❌ ' + (r.error || 'ส่งงานไม่สำเร็จ'));
+      if (btn) { btn.disabled = false; btn.textContent = '📤 ส่งงาน'; }
+    }
+  } catch (e) {
+    showToast('❌ เชื่อมต่อไม่ได้');
+    if (btn) { btn.disabled = false; btn.textContent = '📤 ส่งงาน'; }
+  }
+}
+
+// ================================================================
+//  REVIEW TAB
+// ================================================================
+async function loadReview() {
+  try {
+    const r = await api('getReviewTasks', { date: S.date });
+    if (!r.success) return;
+    renderReview(r.submissions || []);
+  } catch { document.getElementById('main-content').innerHTML = '<div class="empty"><div class="empty-icon">📡</div>เชื่อมต่อไม่ได้</div>'; }
+}
+
+function renderReview(subs) {
+  if (!subs.length) {
+    document.getElementById('main-content').innerHTML = '<div class="empty"><div class="empty-icon">🎉</div>ไม่มีงานรอตรวจในวันนี้</div>';
+    return;
+  }
+  let html = '<div class="sec"><div class="sec-title">งานรอตรวจ (' + subs.length + ')</div>';
+  subs.forEach(s => {
+    html += `<div class="card-sm">
+      <div style="display:flex;align-items:flex-start;gap:.5rem">
+        <div style="flex:1">
+          <div style="font-size:.875rem;font-weight:600">${s.taskName}</div>
+          <div style="font-size:.75rem;color:var(--txt2)">${s.branchId} · โดย ${s.submittedBy} · ${s.submittedAt?.substring(11,16)}</div>
+          <div class="rev-photos" style="margin-top:.5rem">
+            ${(s.photos||[]).slice(0,4).map(p => `<div class="rev-photo">${p?.url?`<img src="${p.url}" loading="lazy"/>`:'📷'}</div>`).join('')}
+            ${s.photos?.length > 4 ? `<div style="font-size:.75rem;color:var(--txt2);align-self:center">+${s.photos.length-4}</div>` : ''}
+          </div>
+          ${s.remark ? `<div style="font-size:.75rem;color:var(--txt2);margin-top:.25rem">💬 ${s.remark}</div>` : ''}
+        </div>
+      </div>
+      <div class="act-row" style="margin-top:.75rem">
+        <button class="btn-green" onclick="doReview('${s.submissionId}','approved','')">✅ อนุมัติ</button>
+        <button class="btn-red"   onclick="openReviseModal('${s.submissionId}')">↩ ส่งแก้ไข</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+async function doReview(subId, status, comment) {
+  const r = await api('reviewTask', { submissionId: subId, status, comment });
+  if (r.success) { showToast(status === 'approved' ? '✅ อนุมัติแล้ว' : '↩ ส่งกลับแก้ไขแล้ว'); closeModal(); loadReview(); }
+  else showToast('❌ ' + r.error);
+}
+
+function openReviseModal(subId) {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">↩ ส่งกลับให้แก้ไข</div>
+    <div class="fg"><label class="fl">หมายเหตุถึงพนักงาน *</label>
+    <textarea class="fi" id="rev-note" rows="4" placeholder="ระบุสิ่งที่ต้องแก้ไข..."></textarea></div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-red" style="flex:1" onclick="doReview('${subId}','revision',document.getElementById('rev-note').value)">ส่งกลับ</button>
+    </div>`;
+  openModal();
+}
+
+// ================================================================
+//  ADMIN TAB
+// ================================================================
+async function loadAdmin() {
+  const [usersR, branchesR, tasksR] = await Promise.all([
+    api('getUsers', {}), api('getBranches', {}), api('getTaskTemplates', {}),
+  ]);
+  renderAdmin(usersR.users || [], branchesR.branches || [], tasksR.tasks || []);
+}
+
+function renderAdmin(users, branches, tasks) {
+  const roleBg  = {superadmin:'#FEE2E2',editor:'#EDE9FE',user:'#D1FAE5'};
+  const roleCol = {superadmin:'#991B1B',editor:'#5B21B6',user:'#065F46'};
+  const roleIcon = {superadmin:'🔴',editor:'🟣',user:'🟢'};
+
+  let html = `
+  <!-- ===== QUICK STATS ===== -->
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-n" style="color:var(--pri)">${branches.length}</div><div class="stat-l">สาขาทั้งหมด</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--ok)">${users.length}</div><div class="stat-l">พนักงานทั้งหมด</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--acc)">${tasks.length}</div><div class="stat-l">งานประจำวัน</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--pur)">${users.filter(u=>u.role==='editor'||u.role==='superadmin').length}</div><div class="stat-l">Admin/Editor</div></div>
+  </div>`;
+
+  // ===== BRANCHES =====
+  html += `<div class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem">
+      <div class="sec-title" style="margin:0">🏪 สาขา (${branches.length})</div>
+      <button style="font-size:.75rem;font-weight:600;color:var(--pri);padding:.25rem .625rem;background:var(--pri-bg);border-radius:20px" onclick="openAddBranchModal()">+ เพิ่ม</button>
+    </div>`;
+  if (!branches.length) {
+    html += `<div style="text-align:center;padding:1rem;color:var(--txt2);font-size:.875rem">ยังไม่มีสาขา — กด + เพิ่ม</div>`;
+  }
+  branches.forEach(b => {
+    html += `<div class="adm-row">
+      <div class="adm-av" style="background:var(--pri-bg);color:var(--pri);font-size:.75rem;font-weight:700">${b.code||'?'}</div>
+      <div class="adm-info">
+        <div class="adm-name">${b.name}</div>
+        <div class="adm-meta">รหัส: ${b.code||'-'}</div>
+      </div>
+      <button style="padding:.25rem .5rem;background:var(--acc-bg);color:#92400E;border-radius:6px;font-size:.75rem;font-weight:600" onclick="openEditBranchModal('${b.id}','${b.name}','${b.code||''}')">แก้ไข</button>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // ===== USERS =====
+  html += `<div class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem">
+      <div class="sec-title" style="margin:0">👥 พนักงาน (${users.length})</div>
+      <button style="font-size:.75rem;font-weight:600;color:var(--ok);padding:.25rem .625rem;background:var(--ok-bg);border-radius:20px" onclick="openAddUserModal()">+ เพิ่ม</button>
+    </div>
+    <!-- Filter by role -->
+    <div style="display:flex;gap:.375rem;margin-bottom:.75rem;flex-wrap:wrap">
+      <button class="role-filter on" data-role="all"   onclick="filterUsers(this,'all')"        style="padding:.25rem .625rem;border-radius:20px;font-size:.75rem;font-weight:600;border:1.5px solid var(--pri);background:var(--pri);color:#fff">ทั้งหมด</button>
+      <button class="role-filter"    data-role="user"       onclick="filterUsers(this,'user')"      style="padding:.25rem .625rem;border-radius:20px;font-size:.75rem;font-weight:600;border:1.5px solid var(--bdr);color:var(--txt2)">🟢 User</button>
+      <button class="role-filter"    data-role="editor"     onclick="filterUsers(this,'editor')"    style="padding:.25rem .625rem;border-radius:20px;font-size:.75rem;font-weight:600;border:1.5px solid var(--bdr);color:var(--txt2)">🟣 Editor</button>
+      <button class="role-filter"    data-role="superadmin" onclick="filterUsers(this,'superadmin')"style="padding:.25rem .625rem;border-radius:20px;font-size:.75rem;font-weight:600;border:1.5px solid var(--bdr);color:var(--txt2)">🔴 Admin</button>
+    </div>`;
+
+  if (!users.length) {
+    html += `<div style="text-align:center;padding:1rem;color:var(--txt2);font-size:.875rem">ยังไม่มีพนักงาน — กด + เพิ่ม</div>`;
+  }
+  users.forEach(u => {
+    html += `<div class="adm-row user-row" data-role="${u.role}" id="urow-${u.id}">
+      <div class="adm-av" style="background:${roleBg[u.role]||'var(--bg)'};color:${roleCol[u.role]||'var(--txt2)'}">${u.name[0]}</div>
+      <div class="adm-info">
+        <div class="adm-name">${u.name} <span style="font-size:.688rem;font-weight:600;padding:.1rem .375rem;border-radius:10px;background:${roleBg[u.role]||'var(--bg)'};color:${roleCol[u.role]||'var(--txt2)'}">${roleIcon[u.role]||''} ${roleLabel(u.role)}</span></div>
+        <div class="adm-meta">${u.email}</div>
+        <div class="adm-meta">สาขา: ${u.branchId||'ทุกสาขา'} · เข้าล่าสุด: ${u.lastLogin ? u.lastLogin.substring(0,10) : 'ยังไม่เคย'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.25rem;flex-shrink:0">
+        <button style="padding:.25rem .5rem;background:var(--pri-bg);color:var(--pri);border-radius:6px;font-size:.688rem;font-weight:600" onclick="openEditUserModal('${u.id}','${u.name}','${u.role}','${u.branchId||''}','${u.email}')">✏️ แก้ไข</button>
+        <button style="padding:.25rem .5rem;background:var(--err-bg);color:var(--err);border-radius:6px;font-size:.688rem;font-weight:600" onclick="confirmDeactivate('${u.id}','${u.name}')">🗑 ลบ</button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // ===== TASKS =====
+  html += `<div class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem">
+      <div class="sec-title" style="margin:0">📋 งานประจำวัน (${tasks.length})</div>
+      <button style="font-size:.75rem;font-weight:600;color:var(--pur);padding:.25rem .625rem;background:var(--pur-bg);border-radius:20px" onclick="openAddTaskModal()">+ เพิ่ม</button>
+    </div>`;
+
+  const morning = tasks.filter(t => t.shift === 'morning');
+  const afternoon = tasks.filter(t => t.shift === 'afternoon');
+
+  [['morning','กะเช้า','#F59E0B','#FEF3C7','#92400E', morning],
+   ['afternoon','กะบ่าย','#7C3AED','#EDE9FE','#5B21B6', afternoon]].forEach(([shift,label,color,bg,col,list]) => {
+    if (!list.length) return;
+    html += `<div style="font-size:.75rem;font-weight:700;color:${color};margin:.5rem 0 .25rem;padding:.375rem .625rem;background:${bg};border-radius:6px">${label} (${list.length} งาน)</div>`;
+    list.forEach(t => {
+      html += `<div class="adm-row">
+        <div class="adm-av" style="background:${bg};color:${col};font-size:.625rem;font-weight:700">${t.time}</div>
+        <div class="adm-info">
+          <div class="adm-name">${t.name}</div>
+          <div class="adm-meta">📷 ${(t.photoRequirements||[]).length} รูป</div>
+        </div>
+        <div style="display:flex;gap:.25rem;flex-shrink:0">
+          <button style="padding:.25rem .5rem;background:var(--pri-bg);color:var(--pri);border-radius:6px;font-size:.688rem;font-weight:600" onclick="openEditTaskModal('${t.id}','${t.name}','${t.shift}','${t.time}',${JSON.stringify(t.photoRequirements||[]).replace(/'/g,"&#39;")})">✏️</button>
+          <button style="padding:.25rem .5rem;background:var(--err-bg);color:var(--err);border-radius:6px;font-size:.688rem;font-weight:600" onclick="confirmDeleteTask('${t.id}','${t.name}')">🗑</button>
+        </div>
+      </div>`;
+    });
+  });
+  html += `</div>`;
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// Filter users by role
+function filterUsers(btn, role) {
+  document.querySelectorAll('.role-filter').forEach(b => {
+    b.style.background = 'transparent'; b.style.color = 'var(--txt2)'; b.style.borderColor = 'var(--bdr)';
+  });
+  btn.style.background = 'var(--pri)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--pri)';
+  document.querySelectorAll('.user-row').forEach(row => {
+    row.style.display = (role === 'all' || row.dataset.role === role) ? '' : 'none';
+  });
+}
+
+function openAddBranchModal() {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">+ เพิ่มสาขาใหม่</div>
+    <div class="fg"><label class="fl">ชื่อสาขา</label><input class="fi" id="nb-name" placeholder="เช่น สาขา 001 - สยาม"/></div>
+    <div class="fg"><label class="fl">รหัสสาขา</label><input class="fi" id="nb-code" placeholder="001"/></div>
+    <div class="fg"><label class="fl">LINE Channel Token</label><input class="fi" id="nb-line" placeholder="Bearer ..."/></div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-blue" style="flex:1" onclick="addBranch()">บันทึก</button>
+    </div>`;
+  openModal();
+}
+async function addBranch() {
+  const r = await api('createBranch', { name: document.getElementById('nb-name').value, code: document.getElementById('nb-code').value, lineToken: document.getElementById('nb-line').value });
+  if (r.success) { showToast('✅ เพิ่มสาขาเรียบร้อย'); closeModal(); loadAdmin(); }
+  else showToast('❌ ' + r.error);
+}
+
+function pwField(id, label, placeholder='', value='') {
+  return `<div class="fg"><label class="fl">${label}</label><div style="position:relative">
+    <input class="fi" id="${id}" type="password" placeholder="${placeholder}" value="${value}" style="padding-right:2.75rem"/>
+    <button type="button" onclick="toggleModalPw('${id}','${id}-eye')" id="${id}-eye" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--txt3);cursor:pointer">👁</button>
+  </div></div>`;
+}
+
+function openAddUserModal() {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">➕ เพิ่มพนักงานใหม่</div>
+    <div class="fg"><label class="fl">ชื่อ-นามสกุล *</label><input class="fi" id="nu-name" placeholder="ชื่อ นามสกุล"/></div>
+    <div class="fg"><label class="fl">อีเมล *</label><input class="fi" id="nu-email" type="email" placeholder="email@example.com"/></div>
+    ${pwField('nu-pass','รหัสผ่านเริ่มต้น *','ตั้งรหัสผ่าน','Riki1234!')}
+    <div class="fg"><label class="fl">สิทธิ์ *</label>
+      <select class="fsel" id="nu-role">
+        <option value="user">🟢 User — ส่งงานได้</option>
+        <option value="editor">🟣 Editor — ตรวจงานได้</option>
+        <option value="superadmin">🔴 SuperAdmin — จัดการทุกอย่าง</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+      <div class="fg"><label class="fl">รหัสสาขา</label><input class="fi" id="nu-branch" placeholder="001"/></div>
+      <div class="fg"><label class="fl">ชื่อสาขา</label><input class="fi" id="nu-bname" placeholder="สาขา 001"/></div>
+    </div>
+    <div style="background:var(--acc-bg);border-radius:var(--r);padding:.625rem .875rem;font-size:.75rem;color:#92400E;margin-bottom:.75rem">
+      💡 รหัสสาขา User: ใส่เลขสาขา เช่น 001<br>Editor/SuperAdmin: ปล่อยว่าง (เห็นทุกสาขา)
+    </div>
+    <div style="display:flex;gap:.75rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-blue" style="flex:1" id="add-user-btn" onclick="addUser()">💾 บันทึก</button>
+    </div>`;
+  openModal();
+}
+
+async function addUser() {
+  const name   = document.getElementById('nu-name').value.trim();
+  const email  = document.getElementById('nu-email').value.trim();
+  const pass   = document.getElementById('nu-pass').value;
+  const role   = document.getElementById('nu-role').value;
+  const branch = document.getElementById('nu-branch').value.trim();
+  const bname  = document.getElementById('nu-bname').value.trim();
+  if (!name || !email || !pass) { showToast('❌ กรุณากรอกข้อมูลที่มี * ให้ครบ'); return; }
+  const btn = document.getElementById('add-user-btn');
+  btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+  const r = await api('createUser', { name, email, password: pass, role, branchId: branch, branchName: bname || (branch ? 'สาขา '+branch : 'ทุกสาขา') });
+  if (r.success) { showToast('✅ เพิ่มพนักงาน "' + name + '" เรียบร้อย'); closeModal(); loadAdmin(); }
+  else { showToast('❌ ' + r.error); btn.disabled = false; btn.textContent = '💾 บันทึก'; }
+}
+
+function openEditUserModal(id, name, role, branchId, email) {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">✏️ แก้ไขพนักงาน</div>
+    <div style="background:var(--pri-bg);border-radius:var(--r);padding:.75rem;margin-bottom:1rem">
+      <div style="font-size:.875rem;font-weight:600">${name}</div>
+      <div style="font-size:.75rem;color:var(--txt2)">${email||''}</div>
+    </div>
+    <div class="fg"><label class="fl">ชื่อ-นามสกุล</label><input class="fi" id="eu-name" value="${name}"/></div>
+    <div class="fg"><label class="fl">สิทธิ์</label>
+      <select class="fsel" id="eu-role">
+        <option value="user"       ${role==='user'?'selected':''}>🟢 User — ส่งงานได้</option>
+        <option value="editor"     ${role==='editor'?'selected':''}>🟣 Editor — ตรวจงานได้</option>
+        <option value="superadmin" ${role==='superadmin'?'selected':''}>🔴 SuperAdmin — จัดการทุกอย่าง</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+      <div class="fg"><label class="fl">รหัสสาขา</label><input class="fi" id="eu-branch" value="${branchId||''}"/></div>
+      <div class="fg"><label class="fl">ชื่อสาขา</label><input class="fi" id="eu-bname" placeholder="ปล่อยว่างได้"/></div>
+    </div>
+    <div style="border-top:1px solid var(--bdr);padding-top:.875rem;margin-top:.25rem">
+      <div class="sec-title" style="margin-bottom:.5rem">เปลี่ยนรหัสผ่าน (ไม่เปลี่ยน ปล่อยว่าง)</div>
+      ${pwField('eu-pass','รหัสผ่านใหม่','เว้นว่างถ้าไม่เปลี่ยน')}
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:.5rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-blue" style="flex:1" id="edit-user-btn" onclick="editUser('${id}')">💾 บันทึก</button>
+    </div>`;
+  openModal();
+}
+
+async function editUser(id) {
+  const btn = document.getElementById('edit-user-btn');
+  btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+  const newPass = document.getElementById('eu-pass').value;
+  const newName = document.getElementById('eu-name').value.trim();
+  const newBname= document.getElementById('eu-bname').value.trim();
+  const newBranch = document.getElementById('eu-branch').value.trim();
+  const r = await api('updateUser', { id, name: newName, role: document.getElementById('eu-role').value, branchId: newBranch, branchName: newBname||undefined });
+  if (newPass) await api('resetPassword', { id, newPassword: newPass });
+  if (r.success) { showToast('✅ บันทึกข้อมูลเรียบร้อย'); closeModal(); loadAdmin(); }
+  else { showToast('❌ ' + r.error); btn.disabled = false; btn.textContent = '💾 บันทึก'; }
+}
+
+// Confirm deactivate user
+function confirmDeactivate(id, name) {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">🗑 ลบผู้ใช้งาน</div>
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:2.5rem;margin-bottom:.75rem">⚠️</div>
+      <div style="font-size:.938rem;font-weight:600;margin-bottom:.5rem">ยืนยันลบ "${name}"?</div>
+      <div style="font-size:.813rem;color:var(--txt2)">ผู้ใช้จะไม่สามารถ login ได้อีก<br>ข้อมูลที่ส่งไว้จะยังคงอยู่</div>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-red" style="flex:1" onclick="deactivateUser('${id}','${name}')">🗑 ยืนยันลบ</button>
+    </div>`;
+  openModal();
+}
+async function deactivateUser(id, name) {
+  const r = await api('updateUser', { id, active: false });
+  if (r.success) { showToast('✅ ลบ "' + name + '" เรียบร้อย'); closeModal(); loadAdmin(); }
+  else showToast('❌ ' + r.error);
+}
+
+// Edit branch modal
+function openEditBranchModal(id, name, code) {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">✏️ แก้ไขสาขา</div>
+    <div class="fg"><label class="fl">ชื่อสาขา</label><input class="fi" id="eb-name" value="${name}"/></div>
+    <div class="fg"><label class="fl">รหัสสาขา</label><input class="fi" id="eb-code" value="${code}"/></div>
+    <div class="fg"><label class="fl">LINE Channel Token (เปลี่ยนถ้าต้องการ)</label><input class="fi" id="eb-line" placeholder="เว้นว่างถ้าไม่เปลี่ยน"/></div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-blue" style="flex:1" onclick="saveBranch('${id}')">💾 บันทึก</button>
+    </div>`;
+  openModal();
+}
+async function saveBranch(id) {
+  const lineToken = document.getElementById('eb-line').value.trim();
+  const payload = { id, name: document.getElementById('eb-name').value, code: document.getElementById('eb-code').value };
+  if (lineToken) payload.lineToken = lineToken;
+  const r = await api('updateBranch', payload);
+  if (r.success) { showToast('✅ บันทึกสาขาเรียบร้อย'); closeModal(); loadAdmin(); }
+  else showToast('❌ ' + r.error);
+}
+
+// Edit task modal
+function openEditTaskModal(id, name, shift, time, photoReqs) {
+  const reqs = Array.isArray(photoReqs) ? photoReqs : [];
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">✏️ แก้ไขงาน</div>
+    <div class="fg"><label class="fl">ชื่องาน</label><input class="fi" id="et-name" value="${name}"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+      <div class="fg"><label class="fl">กะ</label><select class="fsel" id="et-shift"><option value="morning" ${shift==='morning'?'selected':''}>กะเช้า</option><option value="afternoon" ${shift==='afternoon'?'selected':''}>กะบ่าย</option></select></div>
+      <div class="fg"><label class="fl">เวลา</label><input class="fi" id="et-time" value="${time}"/></div>
+    </div>
+    <div class="fg"><label class="fl">รูปที่ต้องส่ง (คั่นด้วย Enter)</label>
+      <textarea class="fi" id="et-photos" rows="5" style="resize:none">${reqs.join('\n')}</textarea>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:.5rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-blue" style="flex:1" onclick="saveTask('${id}')">💾 บันทึก</button>
+    </div>`;
+  openModal();
+}
+async function saveTask(id) {
+  const photos = document.getElementById('et-photos').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const r = await api('updateTask', { id, name: document.getElementById('et-name').value, shift: document.getElementById('et-shift').value, time: document.getElementById('et-time').value, photoRequirements: photos });
+  if (r.success) { showToast('✅ บันทึกงานเรียบร้อย'); closeModal(); loadAdmin(); }
+  else showToast('❌ ' + r.error);
+}
+
+// Confirm delete task
+function confirmDeleteTask(id, name) {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">🗑 ลบงาน</div>
+    <div style="text-align:center;padding:1rem 0">
+      <div style="font-size:2rem;margin-bottom:.75rem">⚠️</div>
+      <div style="font-size:.938rem;font-weight:600;margin-bottom:.5rem">ลบงาน "${name}"?</div>
+      <div style="font-size:.813rem;color:var(--txt2)">งานจะถูกซ่อนจากพนักงาน ข้อมูลที่ส่งไว้คงอยู่</div>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-red" style="flex:1" onclick="doDeleteTask('${id}','${name}')">🗑 ยืนยันลบ</button>
+    </div>`;
+  openModal();
+}
+async function doDeleteTask(id, name) {
+  const r = await api('deleteTask', { id });
+  if (r.success) { showToast('✅ ลบงาน "' + name + '" เรียบร้อย'); closeModal(); loadAdmin(); }
+  else showToast('❌ ' + r.error);
+}
+
+function openAddTaskModal() {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mtitle">+ เพิ่มงานประจำวัน</div>
+    <div class="fg"><label class="fl">ชื่องาน</label><input class="fi" id="nt-name" placeholder="เช่น ตรวจสินค้า"/></div>
+    <div class="fg"><label class="fl">กะ</label><select class="fsel" id="nt-shift"><option value="morning">กะเช้า</option><option value="afternoon">กะบ่าย</option></select></div>
+    <div class="fg"><label class="fl">เวลา</label><input class="fi" id="nt-time" placeholder="08:00" value="08:00"/></div>
+    <div class="fg"><label class="fl">รูปที่ต้องส่ง (คั่นด้วย Enter)</label><textarea class="fi" id="nt-photos" rows="4" placeholder="ถ่ายรูปหน้าร้าน&#10;ถ่ายรูปด้านหลัง"></textarea></div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn-full btn-out" style="flex:1" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-full btn-blue" style="flex:1" onclick="addTask()">บันทึก</button>
+    </div>`;
+  openModal();
+}
+async function addTask() {
+  const photos = document.getElementById('nt-photos').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const r = await api('createTask', { name: document.getElementById('nt-name').value, shift: document.getElementById('nt-shift').value, time: document.getElementById('nt-time').value, photoRequirements: photos, branchId: 'all' });
+  if (r.success) { showToast('✅ เพิ่มงานเรียบร้อย'); closeModal(); loadAdmin(); }
+  else showToast('❌ ' + r.error);
+}
+
+// ================================================================
+//  REPORT TAB
+// ================================================================
+async function loadReport() {
+  try {
+    const r = await api('getDashboard', { date: S.date });
+    if (!r.success) return;
+    renderReport(r.branches || []);
+  } catch { document.getElementById('main-content').innerHTML = '<div class="empty"><div class="empty-icon">📡</div>เชื่อมต่อไม่ได้</div>'; }
+}
+
+function renderReport(branches) {
+  const total  = branches.length;
+  const complete = branches.filter(b => b.done === b.total).length;
+  let html = `
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-n" style="color:var(--ok)">${complete}</div><div class="stat-l">สาขาส่งครบ / ${total}</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--pri)">${branches.reduce((s,b)=>s+b.done,0)}</div><div class="stat-l">งานส่งรวม</div></div>
+    </div>
+    <div class="sec"><div class="sec-title">ความคืบหน้าแต่ละสาขา</div>`;
+  branches.forEach(b => {
+    html += `<div class="card-sm"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.375rem">
+      <div style="font-size:.875rem;font-weight:600">${b.name}</div>
+      <span class="badge ${b.done===b.total?'b-done':'b-new'}">${b.pct}%</span></div>
+      <div class="pbar"><div class="pfill ${b.done===b.total?'p-green':b.pct>50?'p-blue':'p-amber'}" style="width:${b.pct}%"></div></div>
+      <div style="font-size:.75rem;color:var(--txt2);margin-top:.25rem">${b.done}/${b.total} งาน</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // LINE preview
+  html += `<div class="sec"><div class="sec-title">ตัวอย่าง LINE Notification</div>
+    <div class="line-preview"><div class="line-hdr">🔔 เมื่อสาขาส่งงานครบ</div>
+    <div class="line-msg">✅ RIKI Daily Routine\n\n🏪 สาขา 001 - สยาม\nส่งงานครบทุกขั้นตอนแล้ว!\n\n📅 ${new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}\n📊 14/14 ขั้นตอน ✓</div>
+    </div></div>`;
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ================================================================
+//  PROFILE MODAL
+// ================================================================
+function showProfile() {
+  const u = S.user;
+  if (!u) return;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--pri-bg);color:var(--pri);display:flex;align-items:center;justify-content:center;font-size:1.625rem;font-weight:700;margin:0 auto .75rem">${u.name[0]}</div>
+      <div style="font-size:1rem;font-weight:700">${u.name}</div>
+      <div style="font-size:.8rem;color:var(--txt2);margin:.25rem 0">${u.email}</div>
+      <span class="badge b-new">${roleLabel(u.role)}</span>
+    </div>
+    <div style="font-size:.813rem;color:var(--txt2);text-align:center;margin-bottom:1rem">สาขา: ${u.branchName || 'ทุกสาขา'}</div>
+    <button class="btn-full btn-out" style="margin-bottom:.5rem" onclick="closeModal()">ปิด</button>
+    <button class="btn-full" style="border:1.5px solid var(--err);color:var(--err);border-radius:var(--rl);padding:.75rem;font-size:.938rem;font-weight:600;width:100%" onclick="logout()">🚪 ออกจากระบบ</button>`;
+  openModal();
+}
+
+// ================================================================
+//  POLLING (auto-refresh every 30s)
+// ================================================================
+function startPolling() {
+  clearInterval(S.pollTimer);
+  S.pollTimer = setInterval(() => {
+    if (S.currentTab === 'tasks' && document.getElementById('s-main').classList.contains('on')) loadTasks();
+  }, 30000);
+}
+
+// ================================================================
+//  MODAL / TOAST / UTILS
+// ================================================================
+function openModal() { document.getElementById('modal').style.display = 'flex'; }
+function closeModal(e) { if (!e || e.target === document.getElementById('modal')) document.getElementById('modal').style.display = 'none'; }
+
+function showToast(msg) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+function roleLabel(r) { return {superadmin:'SuperAdmin',editor:'Editor',user:'User',viewer:'Viewer'}[r] || r; }
+
+// Show/hide password
+function togglePw() {
+  const inp = document.getElementById('l-pass');
+  const eye = document.getElementById('pw-eye');
+  if (inp.type === 'password') { inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
+function toggleModalPw(inputId, eyeId) {
+  const inp = document.getElementById(inputId);
+  const eye = document.getElementById(eyeId);
+  if (!inp || !eye) return;
+  if (inp.type === 'password') { inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
+</script>
+</body>
+</html>
