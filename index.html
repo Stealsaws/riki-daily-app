@@ -1161,6 +1161,7 @@ async function loadAdmin() {
 }
 
 function renderAdmin(users,branches,tasks) {
+  window._adminTasks = tasks; // เก็บไว้ให้ openEditTaskModalById ดึงมาใช้ กันปัญหา quote ชนกันใน onclick
   const roleBg={superadmin:'#FEE2E2',editor:'#EDE9FE',inspector:'#E0F2FE',user:'#D1FAE5'};
   const roleCol={superadmin:'#991B1B',editor:'#5B21B6',inspector:'#0369A1',user:'#065F46'};
   const roleIcon={superadmin:'🔴',editor:'🟣',inspector:'🔵',user:'🟢'};
@@ -1226,7 +1227,7 @@ function renderAdmin(users,branches,tasks) {
       <div class="adm-av" style="background:${bg};color:${col};font-size:.563rem;font-weight:700;line-height:1.2;text-align:center">${safeTime(t.time)||t.time}<br>${DOW_LABEL[t.dayOfWeek||'daily']||''}</div>
       <div class="adm-info"><div class="adm-name">${t.name}</div><div class="adm-meta">📷 ${(t.photoRequirements||[]).length} รูป</div></div>
       <div style="display:flex;gap:.25rem;flex-shrink:0">
-        <button style="padding:.25rem .5rem;background:var(--pri-bg);color:var(--pri);border-radius:6px;font-size:.688rem;font-weight:600" onclick="openEditTaskModal('${t.id}','${t.name}','${t.shift}','${t.time}',${JSON.stringify(t.photoRequirements||[]).replace(/'/g,"&#39;")},'${t.dayOfWeek||'daily'}')">✏️</button>
+       <button style="padding:.25rem .5rem;background:var(--pri-bg);color:var(--pri);border-radius:6px;font-size:.688rem;font-weight:600" onclick="openEditTaskModalById('${t.id}')">✏️</button>
         <button style="padding:.25rem .5rem;background:var(--err-bg);color:var(--err);border-radius:6px;font-size:.688rem;font-weight:600" onclick="confirmDeleteTask('${t.id}','${t.name}')">🗑</button>
       </div></div>`;
   }
@@ -1403,6 +1404,11 @@ async function saveBranch(id) {
 }
 
 const DOW_OPTS=[['daily','📋 ทุกวัน'],['mon','จันทร์'],['tue','อังคาร'],['wed','พุธ'],['thu','พฤหัสบดี'],['fri','ศุกร์'],['sat','เสาร์'],['sun','อาทิตย์']];
+function openEditTaskModalById(id) {
+  const t = (window._adminTasks||[]).find(x=>x.id===id);
+  if (!t) { showToast('❌ ไม่พบข้อมูลงานนี้ ลองรีเฟรชหน้าใหม่'); return; }
+  openEditTaskModal(t.id, t.name, t.shift, t.time, t.photoRequirements||[], t.dayOfWeek||'daily');
+}
 
 function openEditTaskModal(id,name,shift,time,photoReqs,dayOfWeek) {
   const reqs=Array.isArray(photoReqs)?photoReqs:[], dow=dayOfWeek||'daily';
